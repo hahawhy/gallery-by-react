@@ -93,7 +93,7 @@ class ControllerUnit extends React.Component{
   render(){
     let controllerUnitClassName = 'controller-unit';
     if(this.props.arrange.isCenter){
-      controllerUnitClassName += ' is-center ';
+      controllerUnitClassName += ' is-center';
       if(this.props.arrange.isInverse){
         controllerUnitClassName += ' is-inverse';
       }
@@ -148,19 +148,19 @@ class GalleryStage extends React.Component {
    hPosRangeRightSecX = hPosRange.rightSecX,
    hPosRangeY = hPosRange.y,
    vPosRangeX = vPosRange.x,
-   vPosRangeTopY = vPosRange.topY;
+   vPosRangeTopY = vPosRange.topY,
+   imgsArrangeTopArr = [],
+   topImgNum = Math.floor(Math.random()*2),
+   topImgSpliceIndex=0,
+   imgsArrangeCenterArr = imgsArrangeArr.splice(centerIndex,1);
 
-   let imgsArrangeCenterArr = imgsArrangeArr.splice(centerIndex,1);
    imgsArrangeCenterArr[0]={
      pos:centerPos,
      rotate:0,
      isCenter:true
    }
 
-   let imgsArrangeTopArr = [],
-   topImgNum = Math.floor(Math.random()*2),
    topImgSpliceIndex = Math.floor(Math.random()*(imgsArrangeArr.length-topImgNum));
-
    imgsArrangeTopArr = imgsArrangeArr.splice(topImgSpliceIndex,topImgNum);
    imgsArrangeTopArr.forEach( (value,index)=>{
      imgsArrangeTopArr[index] = {
@@ -168,7 +168,8 @@ class GalleryStage extends React.Component {
          top: getRangeRandom(vPosRangeTopY[0],vPosRangeTopY[1]),
          left: getRangeRandom(vPosRangeX[0],vPosRangeX[1])
        },
-       rotate: get30DegRandom() //感觉初始化render那里已经把center什么的设置成false了，这里就不用再初始化为false了吧？？试验一下~~~~~~~~~~
+       rotate: get30DegRandom(), //感觉初始化render那里已经把center什么的设置成false了，这里就不用再初始化为false了吧？？试验一下~~~~~~~~~~
+       isCenter:false
      }; //这里不加分号是不是也可以呢??????
    });
 
@@ -184,14 +185,15 @@ class GalleryStage extends React.Component {
          top: getRangeRandom(hPosRangeY[0],hPosRangeY[1]),
          left: getRangeRandom(hPosRangeLORX[0],hPosRangeLORX[1])
        },
-       rotate: get30DegRandom()
+       rotate: get30DegRandom(),
+       isCenter:false
      };  //后面必须加分号吗？？？？？？
    }
 
-   if(imgsArrangeArr && imgsArrangeTopArr[0]){//这样写可以吗？？？？？
-     imgsArrangeArr.splice(topImgSpliceIndex,0,imgsArrangeTopArr);
+   if(imgsArrangeArr && imgsArrangeTopArr[0]){
+     imgsArrangeArr.splice(topImgSpliceIndex,0,imgsArrangeTopArr[0]);//后面追加的是元素，不是数组，一直布局不对，终于在这里找到原因了
    }
-   imgsArrangeArr.splice(centerIndex,0,imgsArrangeCenterArr);
+   imgsArrangeArr.splice(centerIndex,0,imgsArrangeCenterArr[0]);//少写了[0] 坑自己啊啊啊
    this.setState({
      imgsArrangeArr:imgsArrangeArr //事实证明不可以加分号哦，会报错
    });
@@ -205,13 +207,13 @@ class GalleryStage extends React.Component {
   }
 
   componentDidMount(){
-    let stageDOM = this.refs.stage,//好像新版的是酱紫写的吧？？？？？？
+    let stageDOM = ReactDOM.findDOMNode(this.refs.stage),//好像新版的是酱紫写的吧？？？？？？
     stageW = stageDOM.scrollWidth,
     stageH = stageDOM.scrollHeight,
     halfStageW = Math.ceil(stageW/2),
     halfStageH = Math.ceil(stageH/2);
 
-    let imgFigureDOM = this.refs.imgFigure0,
+    let imgFigureDOM = ReactDOM.findDOMNode(this.refs.imgFigure0),
     imgW = imgFigureDOM.scrollWidth,
     imgH = imgFigureDOM.scrollHeight,
     halfImgW = Math.ceil(imgW/2),
